@@ -5,117 +5,98 @@ export default function NightSummary({ roomId, send, onClose }) {
   const { state } = useGame();
   const summary = state.nightSummary;
   if (!summary) return null;
-
   const deaths = summary.deaths || [];
 
   return (
-    <div className="fixed inset-0 z-[60] bg-black/85 flex items-center justify-center p-5">
-      <div className="bg-[#0f0f1a] border border-[#1a1a2e] rounded-2xl w-full max-w-md overflow-hidden">
-
-        <div className="bg-[#1a1a2e] px-5 py-4 border-b border-[#0a0a0f] flex items-center gap-3">
-          <span className="text-2xl">🌙</span>
-          <div>
-            <p className="text-[#f5e6ca] font-bold text-sm">Résumé de la nuit</p>
-            <p className="text-[#555] text-xs">Ce qui s'est passé cette nuit</p>
+    <div className="fixed inset-0 z-[60] flex items-end" style={{ background:'rgba(0,0,0,0.85)' }}>
+      <div className="w-full rounded-t-3xl overflow-hidden animate-slide-up"
+        style={{ background:'#0f0f1a', border:'1px solid rgba(255,255,255,0.08)', borderBottom:'none', maxHeight:'85vh', display:'flex', flexDirection:'column' }}>
+        {/* Handle + Header */}
+        <div className="px-5 pt-3 pb-4 flex-shrink-0" style={{ background:'#1a1a2e', borderBottom:'1px solid rgba(255,255,255,0.06)' }}>
+          <div className="w-10 h-1 rounded-full mx-auto mb-3" style={{ background:'rgba(255,255,255,0.15)' }} />
+          <div className="flex items-center gap-3">
+            <span style={{ fontSize:28 }}>🌙</span>
+            <div>
+              <p className="font-bold text-sm" style={{ color:'#f5e6ca' }}>Résumé de la nuit</p>
+              <p className="text-xs" style={{ color:'rgba(245,230,202,0.4)' }}>Ce qui s'est passé cette nuit</p>
+            </div>
           </div>
         </div>
 
-        <div className="p-5 flex flex-col gap-2.5">
+        <div className="flex-1 overflow-y-auto scroll-smooth p-4 space-y-2.5">
 
-          {/* Wolf target */}
-          <div className="bg-[rgba(127,29,29,0.2)] border border-[#7f1d1d] rounded-xl px-3.5 py-2.5">
-            <p className="text-[#888] text-[10px] uppercase tracking-wider mb-1">Attaque des loups</p>
-            <p className="text-[#fca5a5] font-semibold text-sm">
-              {summary.wolfVictimName
-                ? `🐺 ${summary.wolfVictimName} a été attaqué`
-                : 'Aucune attaque cette nuit'}
+          {/* Wolf attack */}
+          <div className="rounded-2xl px-4 py-3" style={{ background:'rgba(127,29,29,0.2)',border:'1px solid #7f1d1d' }}>
+            <p className="text-[10px] uppercase tracking-wider mb-1" style={{ color:'rgba(245,230,202,0.4)' }}>Attaque des loups</p>
+            <p className="font-semibold text-sm" style={{ color:'#fca5a5' }}>
+              {summary.wolfVictimName ? `🐺 ${summary.wolfVictimName} a été attaqué` : 'Aucune attaque cette nuit'}
             </p>
           </div>
 
-          {/* Salvateur saved */}
-          {summary.salvateurSaved && (
-            <div className="bg-[rgba(19,78,74,0.2)] border border-[#0f766e] rounded-xl px-3.5 py-2.5">
-              <p className="text-[#888] text-[10px] uppercase tracking-wider mb-1">Protection du Salvateur</p>
-              <p className="text-[#5eead4] font-semibold text-sm">
-                🛡️ {summary.wolfVictimName} a été protégé(e) par le Salvateur !
-              </p>
+          {summary.salvateurSaved&&(
+            <div className="rounded-2xl px-4 py-3" style={{ background:'rgba(19,78,74,0.2)',border:'1px solid #0f766e' }}>
+              <p className="text-[10px] uppercase tracking-wider mb-1" style={{ color:'rgba(245,230,202,0.4)' }}>Protection du Salvateur</p>
+              <p className="font-semibold text-sm" style={{ color:'#5eead4' }}>🛡️ {summary.wolfVictimName} a été protégé(e) !</p>
+            </div>
+          )}
+          {summary.witchSaved&&(
+            <div className="rounded-2xl px-4 py-3" style={{ background:'rgba(6,95,70,0.2)',border:'1px solid #065f46' }}>
+              <p className="text-[10px] uppercase tracking-wider mb-1" style={{ color:'rgba(245,230,202,0.4)' }}>Potion de vie</p>
+              <p className="font-semibold text-sm" style={{ color:'#6ee7b7' }}>🧪 {summary.savedVictimName||'La victime'} a été sauvé(e)</p>
+            </div>
+          )}
+          {summary.witchKillName&&(
+            <div className="rounded-2xl px-4 py-3" style={{ background:'rgba(127,29,29,0.2)',border:'1px solid #991b1b' }}>
+              <p className="text-[10px] uppercase tracking-wider mb-1" style={{ color:'rgba(245,230,202,0.4)' }}>Potion de mort</p>
+              <p className="font-semibold text-sm" style={{ color:'#fca5a5' }}>☠️ {summary.witchKillName} a été empoisonné(e)</p>
+            </div>
+          )}
+          {summary.protectedName&&!summary.salvateurSaved&&(
+            <div className="rounded-2xl px-4 py-3" style={{ background:'rgba(19,78,74,0.2)',border:'1px solid #0f766e' }}>
+              <p className="text-[10px] uppercase tracking-wider mb-1" style={{ color:'rgba(245,230,202,0.4)' }}>Protection du Salvateur</p>
+              <p className="font-semibold text-sm" style={{ color:'#5eead4' }}>🛡️ {summary.protectedName} a été protégé(e)</p>
+            </div>
+          )}
+          {summary.loupBlancKillName&&(
+            <div className="rounded-2xl px-4 py-3" style={{ background:'rgba(71,85,105,0.2)',border:'1px solid #475569' }}>
+              <p className="text-[10px] uppercase tracking-wider mb-1" style={{ color:'rgba(245,230,202,0.4)' }}>Loup Blanc</p>
+              <p className="font-semibold text-sm" style={{ color:'#cbd5e1' }}>🤍 {summary.loupBlancKillName} a été éliminé par le Loup Blanc</p>
             </div>
           )}
 
-          {/* Witch save */}
-          {summary.witchSaved && (
-            <div className="bg-[rgba(6,95,70,0.2)] border border-[#065f46] rounded-xl px-3.5 py-2.5">
-              <p className="text-[#888] text-[10px] uppercase tracking-wider mb-1">Potion de vie</p>
-              <p className="text-[#6ee7b7] font-semibold text-sm">
-                🧪 {summary.savedVictimName || 'La victime'} a été sauvé(e)
-              </p>
-            </div>
-          )}
-
-          {/* Witch kill */}
-          {summary.witchKillName && (
-            <div className="bg-[rgba(127,29,29,0.2)] border border-[#991b1b] rounded-xl px-3.5 py-2.5">
-              <p className="text-[#888] text-[10px] uppercase tracking-wider mb-1">Potion de mort</p>
-              <p className="text-[#fca5a5] font-semibold text-sm">
-                ☠️ {summary.witchKillName} a été empoisonné(e)
-              </p>
-            </div>
-          )}
-
-          {/* Salvateur protection info */}
-          {summary.protectedName && !summary.salvateurSaved && (
-            <div className="bg-[rgba(19,78,74,0.2)] border border-[#0f766e] rounded-xl px-3.5 py-2.5">
-              <p className="text-[#888] text-[10px] uppercase tracking-wider mb-1">Protection du Salvateur</p>
-              <p className="text-[#5eead4] font-semibold text-sm">
-                🛡️ {summary.protectedName} a été protégé(e)
-              </p>
-            </div>
-          )}
-
-          {/* Loup Blanc kill */}
-          {summary.loupBlancKillName && (
-            <div className="bg-[rgba(71,85,105,0.2)] border border-[#475569] rounded-xl px-3.5 py-2.5">
-              <p className="text-[#888] text-[10px] uppercase tracking-wider mb-1">Loup Blanc</p>
-              <p className="text-[#cbd5e1] font-semibold text-sm">
-                🤍 {summary.loupBlancKillName} a été éliminé par le Loup Blanc
-              </p>
-            </div>
-          )}
-
-          {/* Deaths this morning */}
-          <div className="bg-black/30 border border-[#1a1a2e] rounded-xl px-3.5 py-2.5">
-            <p className="text-[#888] text-[10px] uppercase tracking-wider mb-2">Morts ce matin</p>
-            {deaths.length === 0 ? (
-              <p className="text-[#6ee7b7] font-semibold text-sm">✨ Personne n'est mort cette nuit !</p>
-            ) : deaths.map((d, i) => (
-              <div key={i} className={`flex items-center gap-2 py-1 ${i < deaths.length - 1 ? 'border-b border-[#1a1a2e]' : ''}`}>
-                <span className="text-base">💀</span>
+          {/* Deaths */}
+          <div className="rounded-2xl px-4 py-3" style={{ background:'rgba(0,0,0,0.3)',border:'1px solid rgba(255,255,255,0.06)' }}>
+            <p className="text-[10px] uppercase tracking-wider mb-2" style={{ color:'rgba(245,230,202,0.4)' }}>Morts ce matin</p>
+            {deaths.length===0?(
+              <p className="font-semibold text-sm" style={{ color:'#6ee7b7' }}>✨ Personne n'est mort cette nuit !</p>
+            ):deaths.map((d,i)=>(
+              <div key={i} className={`flex items-center gap-2.5 py-2 ${i<deaths.length-1?'border-b':''}`}
+                style={{ borderColor:'rgba(255,255,255,0.06)' }}>
+                <span style={{ fontSize:18 }}>💀</span>
                 <div>
-                  <p className="text-[#f5e6ca] font-semibold text-sm">{d.name}</p>
-                  <p className="text-[#555] text-[10px]">
-                    {ROLE_LABELS[d.role] || d.role} ·{' '}
-                    {d.cause === 'LOUPS' ? 'Tué par les loups' :
-                     d.cause === 'SORCIERE' ? 'Empoisonné par la sorcière' :
-                     d.cause === 'LOUP_BLANC' ? 'Éliminé par le Loup Blanc' :
-                     d.cause === 'AMOUR' ? 'Mort de chagrin (amour)' :
-                     'Cause inconnue'}
+                  <p className="font-semibold text-sm" style={{ color:'#f5e6ca' }}>{d.name}</p>
+                  <p className="text-xs" style={{ color:'rgba(245,230,202,0.4)' }}>
+                    {ROLE_LABELS[d.role]||d.role} ·{' '}
+                    {d.cause==='LOUPS'?'Tué par les loups':d.cause==='SORCIERE'?'Empoisonné':d.cause==='LOUP_BLANC'?'Loup Blanc':d.cause==='AMOUR'?'Mort de chagrin':'Cause inconnue'}
                   </p>
                 </div>
               </div>
             ))}
           </div>
+        </div>
 
-          {/* Actions */}
-          <div className="flex gap-2 mt-1">
-            <button onClick={onClose}
-              className="flex-1 bg-[rgba(255,255,255,0.05)] text-[#888] border border-[#1a1a2e] rounded-xl py-2.5 text-sm font-medium cursor-pointer">
-              Fermer
-            </button>
-            <button onClick={() => { send('/narrator/reveal-deaths', { roomId }); onClose(); }}
-              className="flex-[2] bg-[#e94560] text-white border-none rounded-xl py-2.5 text-sm font-bold cursor-pointer">
-              Révéler les morts au village
-            </button>
-          </div>
+        {/* Actions */}
+        <div className="p-4 flex gap-3 flex-shrink-0" style={{ borderTop:'1px solid rgba(255,255,255,0.06)' }}>
+          <button onClick={onClose}
+            className="flex-1 py-3 rounded-2xl text-sm font-medium active:scale-98"
+            style={{ background:'rgba(255,255,255,0.06)',color:'rgba(245,230,202,0.6)',border:'none',cursor:'pointer' }}>
+            Fermer
+          </button>
+          <button onClick={()=>{send('/narrator/reveal-deaths',{roomId});onClose();}}
+            className="flex-[2] py-3 rounded-2xl text-sm font-bold text-white active:scale-98"
+            style={{ background:'#e94560',border:'none',cursor:'pointer',boxShadow:'0 4px 16px rgba(233,69,96,0.3)' }}>
+            Révéler les morts au village
+          </button>
         </div>
       </div>
     </div>
