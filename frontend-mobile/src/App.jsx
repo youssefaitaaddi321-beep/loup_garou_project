@@ -24,10 +24,10 @@ function AppContent() {
     setScreen('game');
   };
 
-  if (screen === 'login') return <LoginPage onLogin={handleLogin} />;
-  if (screen === 'lobby') return <LobbyPage onJoinRoom={handleJoinRoom} />;
+  if (screen === 'login')   return <LoginPage onLogin={handleLogin} />;
+  if (screen === 'lobby')   return <LobbyPage onJoinRoom={handleJoinRoom} />;
   if (screen === 'waiting') return <WaitingRoom roomId={roomId} onGameStart={handleGameStart} />;
-  if (screen === 'game') return <GamePage roomId={roomId} />;
+  if (screen === 'game')    return <GamePage roomId={roomId} />;
 }
 
 export default function App() {
